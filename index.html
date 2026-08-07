@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Anonymous supplementary webpage for CAST: Explicitly Learning Long-Horizon Manipulation via Coupled Alignment of Subtasks with Action Trajectories.">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>CAST: Explicitly Learning Long-Horizon Manipulation via Coupled Alignment of Subtasks with Action Trajectories</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header class="paper-header container">
+        <h1>CAST: Explicitly Learning Long-Horizon Manipulation via Coupled Alignment of Subtasks with Action Trajectories</h1>
+        <p class="review-status">Anonymous submission</p>
+        <div class="link-row" aria-label="Project resources">
+          <a class="paper-link" href="#supplementary-video">Video</a>
+          <span class="paper-link disabled" aria-disabled="true">Dataset</span>
+        </div>
+        <p class="anonymous-note">Author names, affiliations, contact information, and identifying external links are omitted for double-blind review.</p>
+      </header>
+
+      <section class="container lead-video" id="supplementary-video" aria-labelledby="video-title">
+        <h2 id="video-title">Video Presentation</h2>
+        <div class="video-shell main-video">
+          <video controls playsinline preload="metadata" poster="assets/posters/overview.jpg">
+            <source src="support_video_0807.mp4" type="video/mp4">
+          </video>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="abstract">
+        <h2>Abstract</h2>
+        <p>
+          Long-horizon manipulation requires policies to preserve task intent while adapting motor commands across successive stages.
+          Existing VLA models either predict actions directly or introduce intermediate reasoning; however, they lack paired supervision
+          between subtask prompts and action trajectories, limiting the translation of inferred subtasks into executable actions. To address
+          this issue, we introduce <strong>CAST</strong>, which learns explicit subtask–action alignment through paired supervision. Specifically,
+          <strong>Subtask-Action Joint Modeling (SAJM)</strong> models this correspondence by jointly predicting the subtask prompt and coarse
+          action tokens encoding the associated action segment. Building on this representation, the <strong>Action Refinement Module (ARM)</strong>
+          transforms the coarse action tokens into a continuous action prior for fine-grained motor control. Experiments demonstrate that CAST
+          achieves an average success rate of <strong>95.6%</strong> on LIBERO-LONG and an <strong>18.6%</strong> relative improvement over
+          π<sub>0.5</sub> in real-world long-horizon tasks.
+        </p>
+      </section>
+
+      <section class="container paper-section" id="motivation">
+        <h2>Motivation &amp; Insight</h2>
+        <div class="motivation-points">
+          <article>
+            <h3>⚠️ The Challenge: Subtask–Action Misalignment</h3>
+            <p>
+              Existing VLAs either predict actions directly or introduce intermediate reasoning. However, the inferred subtask is not explicitly
+              <strong>paired with the trajectory used to execute it</strong>. This weak <strong>semantic–motion correspondence</strong> can cause
+              stage confusion and error accumulation in long-horizon tasks.
+            </p>
+          </article>
+          <article>
+            <h3>💡 Our Insight: Learn What to Do and How to Move Together</h3>
+            <p>
+              Humans draw on both semantic knowledge and motor experience to develop appropriate manipulation strategies. When manipulating
+              tabletop objects, they typically identify the target object and form a <strong>coarse manipulation intent</strong>, such as grasping
+              or placing, before refining the subsequent movements. This <strong>coarse-to-fine process</strong> suggests that subtask semantics
+              and the motion required to execute them should be learned together.
+            </p>
+          </article>
+          <article>
+            <h3>🚀 CAST: Coupling Reasoning with Execution</h3>
+            <p>
+              Inspired by this coarse-to-fine process, CAST first uses <strong>SAJM</strong> to jointly predict the current subtask prompt and
+              coarse action tokens that capture its motion structure. <strong>ARM</strong> then refines these tokens into a
+              <strong>continuous action prior</strong>, which conditions the action expert to generate fine-grained controls from the current
+              visual observations and robot state.
+            </p>
+          </article>
+        </div>
+        <figure class="figure-block">
+          <img src="assets/images/figure-000.jpg" alt="CAST couples subtask reasoning with aligned action trajectories for continuous robot execution.">
+          <figcaption><strong>Figure 1.</strong> CAST learns explicit subtask–action correspondence by jointly predicting subtask prompts and aligned coarse action tokens, which are refined into continuous actions.</figcaption>
+        </figure>
+      </section>
+
+      <section class="container paper-section" id="method">
+        <h2>Method</h2>
+        <p>
+          CAST consists of a vision-language backbone, a Guidance Mechanism, the Action Refinement Module, and an action expert.
+          The Guidance Mechanism uses SAJM to jointly predict a subtask prompt and coarse action tokens. ARM refines this discrete
+          representation into a continuous action prior, which conditions the action expert during fine-grained flow matching.
+        </p>
+        <figure class="figure-block wide-figure">
+          <img src="assets/images/figure-001.jpg" alt="Overview of the CAST architecture.">
+          <figcaption><strong>Figure 2.</strong> Overview of CAST. SAJM bridges task semantics with motion structure, while ARM refines coarse action guidance into a continuous prior for fine-grained action generation.</figcaption>
+        </figure>
+
+        <h3 class="contribution-title">Contributions</h3>
+        <div class="method-columns">
+          <article>
+            <h3>Subtask–Action Supervision</h3>
+            <p>CAST introduces SAJM to explicitly couple each subtask prompt with coarse action tokens from its aligned trajectory segment.</p>
+          </article>
+          <article>
+            <h3>Continuous Action Refinement</h3>
+            <p>ARM transforms coarse action tokens into a continuous trajectory prior for fine-grained motor control.</p>
+          </article>
+          <article>
+            <h3>Simulation and Real-World Evaluation</h3>
+            <p>Experiments on LIBERO-LONG and six real-world tasks demonstrate consistent improvements over strong VLA baselines.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="experiments">
+        <h2>Experiments</h2>
+        <p>
+          We evaluate CAST on the ten tasks of LIBERO-LONG and six real-world long-horizon manipulation tasks using a Flexiv robot.
+          Simulation results are averaged over three evaluations of 50 trials per task. Each real-world task is evaluated over 30 trials.
+        </p>
+
+        <h3 class="subsection-title">Simulation results on LIBERO-LONG</h3>
+        <div class="table-wrap">
+          <table class="results-table simulation-table">
+            <caption><strong>Table 1.</strong> Performance on LIBERO-LONG. Success rates (%) are reported across ten tasks.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Method</th>
+                <th scope="col">Subtask<br>Guidance</th>
+                <th scope="col">Action<br>Prior</th>
+                <th scope="col">Avg.</th>
+                <th scope="col">Soup + box<br>in basket</th>
+                <th scope="col">Box + butter<br>in basket</th>
+                <th scope="col">Stove +<br>pot</th>
+                <th scope="col">Bowl in<br>drawer</th>
+                <th scope="col">Mugs on<br>plates</th>
+                <th scope="col">Book in<br>caddy</th>
+                <th scope="col">Mug +<br>pudding</th>
+                <th scope="col">Soup + sauce<br>in basket</th>
+                <th scope="col">Both pots<br>on stove</th>
+                <th scope="col">Mug in<br>microwave</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">CoT-VLA</th><td>×</td><td>×</td><td>69.0</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+              <tr><th scope="row">Seer (scratch)</th><td>×</td><td>×</td><td>78.7</td><td>80.0</td><td>90.0</td><td>91.7</td><td>81.7</td><td>85.0</td><td>65.0</td><td>86.7</td><td>88.3</td><td>51.7</td><td>66.7</td></tr>
+              <tr><th scope="row">Seer</th><td>×</td><td>×</td><td>87.7</td><td>91.7</td><td>90.0</td><td>98.3</td><td>100</td><td>91.7</td><td>93.3</td><td>85.0</td><td>88.3</td><td>61.7</td><td>71.7</td></tr>
+              <tr><th scope="row">MemoryVLA</th><td>×</td><td>×</td><td>93.4</td><td>92.0</td><td>96.0</td><td>96.0</td><td>100</td><td>100</td><td>100</td><td>96.0</td><td>96.0</td><td>62.0</td><td>96.0</td></tr>
+              <tr><th scope="row">Video Policy</th><td>×</td><td>×</td><td>94.0</td><td>100</td><td>100</td><td>100</td><td>98.0</td><td>94.0</td><td>96.0</td><td>88.0</td><td>96.0</td><td>80.0</td><td>86.0</td></tr>
+              <tr class="group-start"><th scope="row">π<sub>0</sub></th><td>✓</td><td>×</td><td>85.2</td><td>96.7</td><td>100</td><td>88.0</td><td>78.0</td><td>76.0</td><td>82.0</td><td>73.7</td><td>96.0</td><td>66.0</td><td>96.0</td></tr>
+              <tr><th scope="row">OpenVLA-OFT</th><td>✓</td><td>×</td><td>94.0</td><td>90.0</td><td>98.0</td><td>98.0</td><td>98.0</td><td>96.0</td><td>100</td><td>92.0</td><td>100</td><td>72.0</td><td>96.0</td></tr>
+              <tr><th scope="row">QwenGr00t</th><td>✓</td><td>×</td><td>90.8</td><td>88.0</td><td>94.0</td><td>100</td><td>98.0</td><td>96.0</td><td>100</td><td>68.0</td><td>100</td><td>66.0</td><td>98.0</td></tr>
+              <tr><th scope="row">TempoFitQwenGr00t</th><td>✓</td><td>×</td><td>94.4</td><td>100</td><td>98.0</td><td>100</td><td>100</td><td>100</td><td>98.0</td><td>80.0</td><td>92.0</td><td>88.0</td><td>88.0</td></tr>
+              <tr><th scope="row">π<sub>0.5</sub></th><td>✓</td><td>×</td><td>92.6</td><td>100</td><td>96.0</td><td>98.0</td><td>96.0</td><td>96.0</td><td>100</td><td>96.0</td><td>90.0</td><td>58.0</td><td>96.0</td></tr>
+              <tr class="group-start"><th scope="row">UniVLA</th><td>×</td><td>✓</td><td>90.0</td><td>100</td><td>92.0</td><td>94.0</td><td>98.0</td><td>86.0</td><td>100</td><td>80.0</td><td>100</td><td>70.0</td><td>82.0</td></tr>
+              <tr><th scope="row">CLaD</th><td>×</td><td>✓</td><td>94.7</td><td>100</td><td>100</td><td>98.0</td><td>94.0</td><td>91.0</td><td>100</td><td>95.0</td><td>100</td><td>82.0</td><td>87.0</td></tr>
+              <tr class="group-start"><th scope="row">w/o ARM</th><td>✓</td><td>×</td><td>93.2</td><td>96.0</td><td>98.0</td><td>100</td><td>96.0</td><td>96.0</td><td>98.0</td><td>84.0</td><td>96.0</td><td>90.0</td><td>78.0</td></tr>
+              <tr class="ours-row"><th scope="row">CAST</th><td>✓</td><td>✓</td><td><strong>95.6</strong></td><td><strong>100</strong></td><td>98.0</td><td><strong>100</strong></td><td><strong>100</strong></td><td>92.0</td><td><strong>100</strong></td><td>90.0</td><td><strong>100</strong></td><td><strong>96.0</strong></td><td>80.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="subsection-title rollout-title">Successful Rollouts on LIBERO-LONG</h3>
+        <p class="subsection-intro">
+          The following rollouts show CAST successfully completing each of the ten LIBERO-LONG tasks.
+        </p>
+        <div class="rollout-carousel-controls" data-carousel-controls="libero-rollouts" aria-label="LIBERO-LONG rollout navigation">
+          <button class="carousel-button" type="button" data-carousel-prev aria-label="Show previous rollouts">←</button>
+          <button class="carousel-button" type="button" data-carousel-next aria-label="Show next rollouts">→</button>
+        </div>
+        <div class="libero-rollout-carousel" id="libero-rollouts" data-carousel tabindex="0" role="region" aria-label="Successful CAST rollouts on the ten LIBERO-LONG tasks">
+          <article class="video-item">
+            <h4>Soup and Cream Cheese</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_01_soup_box.jpg"><source data-src="videos_libero_ours/rollout_put_both_the_alphabet_soup_and_the_cream_cheese_box_in_the_basket_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the alphabet soup and cream cheese box in the basket.</p>
+          </article>
+          <article class="video-item">
+            <h4>Cream Cheese and Butter</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_02_box_butter.jpg"><source data-src="videos_libero_ours/rollout_put_both_the_cream_cheese_box_and_the_butter_in_the_basket_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the cream cheese box and butter in the basket.</p>
+          </article>
+          <article class="video-item">
+            <h4>Stove and Moka Pot</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_03_stove_pot.jpg"><source data-src="videos_libero_ours/rollout_turn_on_the_stove_and_put_the_moka_pot_on_it_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Turn on the stove and place the moka pot on it.</p>
+          </article>
+          <article class="video-item">
+            <h4>Bowl in Drawer</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_04_bowl_drawer.jpg"><source data-src="videos_libero_ours/rollout_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the black bowl in the bottom drawer and close it.</p>
+          </article>
+          <article class="video-item">
+            <h4>Mugs on Plates</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_05_mugs_plates.jpg"><source data-src="videos_libero_ours/rollout_put_the_white_mug_on_the_left_plate_and_put_the_yellow_and_white_mug_on_the_right_plate_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the white mug on the left plate and the yellow-and-white mug on the right plate.</p>
+          </article>
+          <article class="video-item">
+            <h4>Book in Caddy</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_06_book_caddy.jpg"><source data-src="videos_libero_ours/rollout_pick_up_the_book_and_place_it_in_the_back_compartment_of_the_caddy_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Pick up the book and place it in the back compartment of the caddy.</p>
+          </article>
+          <article class="video-item">
+            <h4>Mug and Pudding</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_07_mug_pudding.jpg"><source data-src="videos_libero_ours/rollout_put_the_white_mug_on_the_plate_and_put_the_chocolate_pudding_to_the_right_of_the_plate_episode_0002_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the white mug on the plate and the chocolate pudding to its right.</p>
+          </article>
+          <article class="video-item">
+            <h4>Soup and Tomato Sauce</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_08_soup_sauce.jpg"><source data-src="videos_libero_ours/rollout_put_both_the_alphabet_soup_and_the_tomato_sauce_in_the_basket_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the alphabet soup and tomato sauce in the basket.</p>
+          </article>
+          <article class="video-item">
+            <h4>Two Moka Pots</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_09_both_pots.jpg"><source data-src="videos_libero_ours/rollout_put_both_moka_pots_on_the_stove_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place both moka pots on the stove.</p>
+          </article>
+          <article class="video-item">
+            <h4>Mug in Microwave</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero_10_microwave.jpg"><source data-src="videos_libero_ours/rollout_put_the_yellow_and_white_mug_in_the_microwave_and_close_it_episode_0001_success_rotated180.mp4" type="video/mp4"></video></div>
+            <p>Place the yellow-and-white mug in the microwave and close it.</p>
+          </article>
+        </div>
+
+        <div class="single-video-block">
+          <h4>Representative LIBERO comparison</h4>
+          <div class="video-shell">
+            <video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/libero.jpg">
+              <source data-src="libero_compare.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="caption">π<sub>0.5</sub> (top) and CAST (bottom) on representative LIBERO-LONG tasks. Both methods are shown at 1.5× speed.</p>
+        </div>
+
+        <h3 class="subsection-title">Real-world evaluation</h3>
+        <figure class="figure-block">
+          <img src="assets/images/figure-003.jpg" alt="Flexiv robot setup and six real-world long-horizon manipulation tasks.">
+          <figcaption><strong>Figure 3.</strong> Robot platform and six real-world long-horizon manipulation tasks.</figcaption>
+        </figure>
+        <div class="table-wrap">
+          <table class="results-table real-table">
+            <caption><strong>Table 2.</strong> Real-world task success rates (%) over 30 trials per task.</caption>
+            <thead>
+              <tr><th scope="col">Method</th><th scope="col">Load Pot</th><th scope="col">Desktop Organization</th><th scope="col">Hanoi Tower</th><th scope="col">Block Collection</th><th scope="col">Dinner Setup</th><th scope="col">Organize Bowls</th><th scope="col">Average</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">RDT</th><td>66.7</td><td>66.7</td><td>16.7</td><td>50.0</td><td>26.7</td><td>56.7</td><td>47.3</td></tr>
+              <tr><th scope="row">π<sub>0</sub></th><td>53.3</td><td>70.0</td><td>20.0</td><td>66.7</td><td>43.3</td><td>53.3</td><td>51.1</td></tr>
+              <tr><th scope="row">ACoT-VLA</th><td>73.3</td><td>60.0</td><td>46.7</td><td>66.7</td><td>46.7</td><td>56.7</td><td>58.4</td></tr>
+              <tr><th scope="row">π<sub>0.5</sub></th><td>76.7</td><td>73.3</td><td>23.3</td><td>63.3</td><td><strong>60.0</strong></td><td>80.0</td><td>62.8</td></tr>
+              <tr class="group-start"><th scope="row">w/o ARM</th><td>73.3</td><td>66.7</td><td>50.0</td><td>60.0</td><td>33.4</td><td>66.7</td><td>58.4</td></tr>
+              <tr class="ours-row"><th scope="row">CAST</th><td><strong>86.7</strong></td><td><strong>80.0</strong></td><td><strong>63.3</strong></td><td><strong>76.7</strong></td><td>50.0</td><td><strong>90.0</strong></td><td><strong>74.5</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="demo-grid" aria-label="Real-world task demonstrations">
+          <article class="video-item">
+            <h4>Load Pot</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/load_pot.jpg"><source data-src="load_pot.mp4" type="video/mp4"></video></div>
+            <p>Place the ingredients into the cooking pot.</p>
+          </article>
+          <article class="video-item">
+            <h4>Desktop Organization</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/desk_org_0807.jpg"><source data-src="desk_org_0807.mp4" type="video/mp4"></video></div>
+            <p>Identify and place each object in its designated location.</p>
+          </article>
+          <article class="video-item">
+            <h4>Hanoi Tower</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/hanoi_task_0807.jpg"><source data-src="hanoi_task_0807.mp4" type="video/mp4"></video></div>
+            <p>Stack rings under strict size-ordering constraints.</p>
+          </article>
+          <article class="video-item">
+            <h4>Block Collection</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/block_collection_0807.jpg"><source data-src="block_collection_0807.mp4" type="video/mp4"></video></div>
+            <p>Collect scattered blocks through multi-stage sweeping.</p>
+          </article>
+          <article class="video-item">
+            <h4>Dinner Setup</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/dinner_setup.jpg"><source data-src="dinner_setup.mp4" type="video/mp4"></video></div>
+            <p>Arrange the dinner items in their designated locations.</p>
+          </article>
+          <article class="video-item">
+            <h4>Organize Bowls</h4>
+            <div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/org_bowl_0807.jpg"><source data-src="org_bowl_0807.mp4" type="video/mp4"></video></div>
+            <p>Place two bowls in a drawer and close it.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="comparisons">
+        <h2>Comparison with π<sub>0.5</sub></h2>
+        <p>
+          We compare CAST with π<sub>0.5</sub> on Desktop Organization and Block Collection. π<sub>0.5</sub> is more susceptible
+          to grasp errors and object drops during multi-stage execution, while CAST completes the constituent subtasks more reliably.
+        </p>
+
+        <div class="comparison-section" data-sync-group>
+          <div class="comparison-grid">
+            <article class="video-item">
+              <h4>π<sub>0.5</sub></h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/desk_pi05.jpg"><source data-src="pi05_desk_org.mp4" type="video/mp4"></video></div>
+            </article>
+            <article class="video-item">
+              <h4>CAST</h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/desk_ours.jpg"><source data-src="ours_desk_org.mp4" type="video/mp4"></video></div>
+            </article>
+          </div>
+          <button class="sync-button" type="button">Play both videos</button>
+          <p class="caption"><strong>Desktop Organization.</strong> Rollouts of π<sub>0.5</sub> and CAST.</p>
+        </div>
+
+        <div class="comparison-section" data-sync-group>
+          <div class="comparison-grid">
+            <article class="video-item">
+              <h4>π<sub>0.5</sub></h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/collection_pi05.jpg"><source data-src="pi05_collection.mp4" type="video/mp4"></video></div>
+            </article>
+            <article class="video-item">
+              <h4>CAST</h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/collection.jpg"><source data-src="ours_collection.mp4" type="video/mp4"></video></div>
+            </article>
+          </div>
+          <button class="sync-button" type="button">Play both videos</button>
+          <p class="caption"><strong>Block Collection.</strong> Rollouts of π<sub>0.5</sub> and CAST.</p>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="ablation">
+        <h2>Ablation Studies</h2>
+
+        <h3 class="subsection-title">Subtask-Action Joint Modeling</h3>
+        <p>
+          Joint prediction is compared with subtask-only guidance, action-only guidance, and a decoupled variant that independently
+          predicts the two signals from the same visual-language context.
+        </p>
+        <div class="table-wrap compact-table-wrap">
+          <table class="results-table compact-table">
+            <caption><strong>Table 3.</strong> Ablation of Subtask-Action Joint Modeling. Success rates (%) on three real-world tasks.</caption>
+            <thead><tr><th scope="col">Method</th><th scope="col">Desktop Org.</th><th scope="col">Hanoi Tower</th><th scope="col">Dinner Setup</th><th scope="col">Average</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Subtask-only</th><td>63.3</td><td>36.7</td><td>36.7</td><td>45.6</td></tr>
+              <tr><th scope="row">Action-only</th><td>70.0</td><td>33.3</td><td>30.0</td><td>44.3</td></tr>
+              <tr><th scope="row">Decoupled</th><td>76.7</td><td>50.0</td><td>43.3</td><td>56.7</td></tr>
+              <tr class="ours-row"><th scope="row">SAJM</th><td><strong>80.0</strong></td><td><strong>63.3</strong></td><td><strong>50.0</strong></td><td><strong>64.4</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="subsection-title">Action Refinement Module</h3>
+        <p>
+          Removing ARM leads to unstable action predictions, including spurious gripper toggling. ARM refines coarse action guidance
+          into a continuous trajectory prior, resulting in more stable execution.
+        </p>
+        <div class="comparison-section" data-sync-group>
+          <div class="comparison-grid">
+            <article class="video-item">
+              <h4>Without ARM</h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/arm_no.jpg"><source data-src="bowl_without_ARM.mp4" type="video/mp4"></video></div>
+            </article>
+            <article class="video-item">
+              <h4>CAST (with ARM)</h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/arm_yes.jpg"><source data-src="bowl_with_ARM.mp4" type="video/mp4"></video></div>
+            </article>
+          </div>
+          <button class="sync-button" type="button">Play both videos</button>
+          <p class="caption"><strong>Organize Bowls.</strong> Rollouts without and with ARM.</p>
+        </div>
+
+        <div class="comparison-section" data-sync-group>
+          <div class="comparison-grid">
+            <article class="video-item">
+              <h4>Without ARM</h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/collection_arm_no.jpg"><source data-src="collection_without_ARM.mp4" type="video/mp4"></video></div>
+            </article>
+            <article class="video-item">
+              <h4>CAST (with ARM)</h4>
+              <div class="video-shell"><video class="lazy-video sync-video" muted loop playsinline controls preload="none" poster="assets/posters/collection_arm_yes.jpg"><source data-src="collection_with_ARM.mp4" type="video/mp4"></video></div>
+            </article>
+          </div>
+          <button class="sync-button" type="button">Play both videos</button>
+          <p class="caption"><strong>Block Collection.</strong> Rollouts without and with ARM.</p>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="robustness">
+        <h2>Robustness Analysis</h2>
+        <p>
+          We evaluate CAST under unseen visual conditions and disturbances introduced during execution. CAST remains responsive to changes
+          in the scene and continues the task from updated observations.
+        </p>
+
+        <h3 class="subsection-title">Visual Generalization</h3>
+        <div class="table-wrap compact-table-wrap">
+          <table class="results-table compact-table">
+            <caption><strong>Table 4.</strong> Real-world generalization under unseen visual conditions. Success rates (%).</caption>
+            <thead><tr><th scope="col">Method</th><th scope="col">Unseen Object</th><th scope="col">Unseen Background</th><th scope="col">Unseen Lighting</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">RDT</th><td>62.5</td><td>55.8</td><td>54.2</td></tr>
+              <tr><th scope="row">π<sub>0.5</sub></th><td>73.3</td><td>66.7</td><td>60.0</td></tr>
+              <tr class="ours-row"><th scope="row">CAST</th><td><strong>80.0</strong></td><td><strong>73.3</strong></td><td><strong>83.3</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="demo-grid three-columns">
+          <article class="video-item"><h4>Unseen Object</h4><div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/unseen_object.jpg"><source data-src="unseen_object_2.mp4" type="video/mp4"></video></div></article>
+          <article class="video-item"><h4>Unseen Background</h4><div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/unseen_background.jpg"><source data-src="unseen_background.mp4" type="video/mp4"></video></div></article>
+          <article class="video-item"><h4>Unseen Lighting</h4><div class="video-shell"><video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/unseen_light.jpg"><source data-src="unseen_light.mp4" type="video/mp4"></video></div></article>
+        </div>
+
+        <h3 class="subsection-title">Response to Disturbances</h3>
+        <div class="comparison-grid disturbance-grid">
+          <article class="video-item">
+            <h4>Object Displacement</h4>
+            <div class="video-shell">
+              <video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/bowl_movement.jpg">
+                <source data-src="bowl_with_movement.mp4" type="video/mp4">
+              </video>
+            </div>
+            <p>The target bowl is moved during execution. CAST adapts to its new position and completes the task.</p>
+          </article>
+          <article class="video-item">
+            <h4>Object Drop</h4>
+            <div class="video-shell">
+              <video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/recovery.jpg">
+                <source data-src="hanoi_task_object_drop.mp4" type="video/mp4">
+              </video>
+            </div>
+            <p>After an object drop, CAST returns to the unfinished subtask and continues the sequence.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="failure-cases">
+        <h2>Failure Cases and Limitations</h2>
+        <p>
+          CAST may still fail to maintain sufficient clearance from nearby objects during action execution, resulting in unintended collisions.
+          The following examples illustrate this limitation.
+        </p>
+        <div class="demo-grid three-columns" aria-label="Representative failure cases">
+          <article class="video-item">
+            <h4>Collision During Bowl Placement</h4>
+            <div class="video-shell">
+              <video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/failure_bowl_collision.jpg">
+                <source data-src="videos_libero_ours/rollout_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it_episode_0010_failure_rotated180.mp4" type="video/mp4">
+              </video>
+            </div>
+            <p>Contact with surrounding objects prevents successful completion of the task.</p>
+          </article>
+          <article class="video-item">
+            <h4>Collision During Microwave Placement</h4>
+            <div class="video-shell">
+              <video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/failure_microwave_collision.jpg">
+                <source data-src="videos_libero_ours/rollout_put_the_yellow_and_white_mug_in_the_microwave_and_close_it_episode_0005_failure_rotated180.mp4" type="video/mp4">
+              </video>
+            </div>
+            <p>Interaction with nearby objects disrupts execution before the microwave can be closed.</p>
+          </article>
+          <article class="video-item">
+            <h4>Incomplete Dinner Setup</h4>
+            <div class="video-shell">
+              <video class="lazy-video" muted loop playsinline controls preload="none" poster="assets/posters/failure_dinner_incomplete.jpg">
+                <source data-src="dinner_failed.mp4" type="video/mp4">
+              </video>
+            </div>
+            <p>The rollout ends before all required task stages are completed.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container paper-section" id="resources">
+        <h2>Code and Training Data</h2>
+        <div class="resource-list">
+          <p><strong>Code.</strong> The data preprocessing pipeline and training framework will be released upon completion of internal review.</p>
+          <p><strong>Training dataset.</strong> A small subset of the simulation and real-world datasets is included in the supplementary material. The complete datasets will be released in the future.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>Anonymous supplementary website for double-blind review.</p>
+        <p>
+          Website structure adapted from the
+          <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a>,
+          which is licensed under
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="license noopener">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

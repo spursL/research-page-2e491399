@@ -34,14 +34,14 @@
         <h2>Abstract</h2>
         <p>
           Long-horizon manipulation requires policies to preserve task intent while adapting motor commands across successive stages.
-          Existing VLA models either predict actions directly or introduce intermediate reasoning; however, they lack paired supervision
-          between subtask prompts and action trajectories, limiting the translation of inferred subtasks into executable actions. To address
-          this issue, we introduce <strong>CAST</strong>, which learns explicit subtask–action alignment through paired supervision. Specifically,
-          <strong>Subtask-Action Joint Modeling (SAJM)</strong> models this correspondence by jointly predicting the subtask prompt and coarse
-          action tokens encoding the associated action segment. Building on this representation, the <strong>Action Refinement Module (ARM)</strong>
-          transforms the coarse action tokens into a continuous action prior for fine-grained motor control. Experiments demonstrate that CAST
-          achieves an average success rate of <strong>95.6%</strong> on LIBERO-LONG and an <strong>18.6%</strong> relative improvement over
-          π<sub>0.5</sub> in real-world long-horizon tasks.
+          Existing VLA models either predict actions directly or introduce intermediate reasoning; however, subtask semantics and their
+          corresponding action trajectories remain weakly coupled during policy learning, limiting the translation of inferred subtasks into
+          executable actions. To address this issue, we introduce <strong>CAST</strong>, which learns explicit subtask–action guidance through
+          paired supervision. Specifically, <strong>Subtask-Action Joint Modeling (SAJM)</strong> jointly predicts the subtask prompt and coarse
+          action tokens encoding the aligned trajectory segment. Building on this guidance, the <strong>Action Refinement Module (ARM)</strong>
+          refines it into a continuous action prior for fine-grained motor control. Experiments demonstrate that CAST achieves a
+          <strong>95.6%</strong> average success rate on LIBERO-LONG and outperforms π<sub>0.5</sub> by
+          <strong>11.7%</strong> in real-world long-horizon tasks.
         </p>
       </section>
 
@@ -51,9 +51,9 @@
           <article>
             <h3>⚠️ The Challenge: Subtask–Action Misalignment</h3>
             <p>
-              Existing VLAs either predict actions directly or introduce intermediate reasoning. However, the inferred subtask is not explicitly
-              <strong>paired with the trajectory used to execute it</strong>. This weak <strong>semantic–motion correspondence</strong> can cause
-              stage confusion and error accumulation in long-horizon tasks.
+              Existing approaches often provide either semantic reasoning or motion guidance, while their correspondence remains
+              <strong>weakly constrained during policy learning</strong>. Without supervised alignment between subtask semantics and
+              <strong>executable motion</strong>, an inferred stage may not reliably guide the actions needed to complete it.
             </p>
           </article>
           <article>
@@ -61,23 +61,23 @@
             <p>
               Humans draw on both semantic knowledge and motor experience to develop appropriate manipulation strategies. When manipulating
               tabletop objects, they typically identify the target object and form a <strong>coarse manipulation intent</strong>, such as grasping
-              or placing, before refining the subsequent movements. This <strong>coarse-to-fine process</strong> suggests that subtask semantics
-              and the motion required to execute them should be learned together.
+              or placing, before refining the subsequent movements. This <strong>coarse-to-fine process</strong> motivates representing the
+              current stage with a subtask prompt and the motion structure of its aligned trajectory segment with coarse action tokens.
             </p>
           </article>
           <article>
             <h3>🚀 CAST: Coupling Reasoning with Execution</h3>
             <p>
-              Inspired by this coarse-to-fine process, CAST first uses <strong>SAJM</strong> to jointly predict the current subtask prompt and
-              coarse action tokens that capture its motion structure. <strong>ARM</strong> then refines these tokens into a
-              <strong>continuous action prior</strong>, which conditions the action expert to generate fine-grained controls from the current
-              visual observations and robot state.
+              CAST uses <strong>SAJM</strong> to jointly predict the current subtask prompt and coarse action tokens from its aligned trajectory
+              segment, forming explicit <strong>subtask–action guidance</strong>. <strong>ARM</strong> refines this guidance into a
+              <strong>continuous trajectory prior</strong>. Conditioned on this prior together with current visual and proprioceptive inputs,
+              the action expert generates fine-grained action sequences that preserve subtask intent while adapting to updated observations.
             </p>
           </article>
         </div>
         <figure class="figure-block">
           <img src="assets/images/figure-000.jpg" alt="CAST couples subtask reasoning with aligned action trajectories for continuous robot execution.">
-          <figcaption><strong>Figure 1.</strong> CAST learns explicit subtask–action correspondence by jointly predicting subtask prompts and aligned coarse action tokens, which are refined into continuous actions.</figcaption>
+          <figcaption><strong>Figure 1.</strong> Coupling reasoning and execution for long-horizon manipulation. CAST learns explicit subtask–action guidance by jointly predicting subtask prompts and coarse action tokens from aligned trajectory segments, which are refined into continuous actions for long-horizon manipulation.</figcaption>
         </figure>
       </section>
 
@@ -85,8 +85,8 @@
         <h2>Method</h2>
         <p>
           CAST consists of a vision-language backbone, a Guidance Mechanism, the Action Refinement Module, and an action expert.
-          The Guidance Mechanism uses SAJM to jointly predict a subtask prompt and coarse action tokens. ARM refines this discrete
-          representation into a continuous action prior, which conditions the action expert during fine-grained flow matching.
+          The Guidance Mechanism jointly predicts subtask prompts and coarse action tokens as structured guidance. ARM then refines this
+          representation into a continuous action prior that conditions the action expert for fine-grained action generation.
         </p>
         <figure class="figure-block wide-figure">
           <img src="assets/images/figure-001.jpg" alt="Overview of the CAST architecture.">
@@ -96,16 +96,16 @@
         <h3 class="contribution-title">Contributions</h3>
         <div class="method-columns">
           <article>
-            <h3>Subtask–Action Supervision</h3>
-            <p>CAST introduces SAJM to explicitly couple each subtask prompt with coarse action tokens from its aligned trajectory segment.</p>
+            <h3>Subtask–Action Guidance</h3>
+            <p>Conceptually, CAST introduces subtask–action guidance through Subtask-Action Joint Modeling (SAJM), explicitly pairing each subtask prompt with coarse action tokens from its aligned trajectory segment.</p>
           </article>
           <article>
             <h3>Continuous Action Refinement</h3>
-            <p>ARM transforms coarse action tokens into a continuous trajectory prior for fine-grained motor control.</p>
+            <p>We develop an Action Refinement Module (ARM) that refines the learned guidance into a continuous trajectory prior, providing structured conditioning for fine-grained action generation.</p>
           </article>
           <article>
             <h3>Simulation and Real-World Evaluation</h3>
-            <p>Experiments on LIBERO-LONG and six real-world tasks demonstrate consistent improvements over strong VLA baselines.</p>
+            <p>Empirically, we validate CAST through extensive experiments on simulation and real-world tasks, demonstrating consistent improvements over strong VLA baselines in long-horizon manipulation.</p>
           </article>
         </div>
       </section>
@@ -148,7 +148,6 @@
               <tr class="group-start"><th scope="row">π<sub>0</sub></th><td>✓</td><td>×</td><td>85.2</td><td>96.7</td><td>100</td><td>88.0</td><td>78.0</td><td>76.0</td><td>82.0</td><td>73.7</td><td>96.0</td><td>66.0</td><td>96.0</td></tr>
               <tr><th scope="row">OpenVLA-OFT</th><td>✓</td><td>×</td><td>94.0</td><td>90.0</td><td>98.0</td><td>98.0</td><td>98.0</td><td>96.0</td><td>100</td><td>92.0</td><td>100</td><td>72.0</td><td>96.0</td></tr>
               <tr><th scope="row">QwenGr00t</th><td>✓</td><td>×</td><td>90.8</td><td>88.0</td><td>94.0</td><td>100</td><td>98.0</td><td>96.0</td><td>100</td><td>68.0</td><td>100</td><td>66.0</td><td>98.0</td></tr>
-              <tr><th scope="row">TempoFitQwenGr00t</th><td>✓</td><td>×</td><td>94.4</td><td>100</td><td>98.0</td><td>100</td><td>100</td><td>100</td><td>98.0</td><td>80.0</td><td>92.0</td><td>88.0</td><td>88.0</td></tr>
               <tr><th scope="row">π<sub>0.5</sub></th><td>✓</td><td>×</td><td>92.6</td><td>100</td><td>96.0</td><td>98.0</td><td>96.0</td><td>96.0</td><td>100</td><td>96.0</td><td>90.0</td><td>58.0</td><td>96.0</td></tr>
               <tr class="group-start"><th scope="row">UniVLA</th><td>×</td><td>✓</td><td>90.0</td><td>100</td><td>92.0</td><td>94.0</td><td>98.0</td><td>86.0</td><td>100</td><td>80.0</td><td>100</td><td>70.0</td><td>82.0</td></tr>
               <tr><th scope="row">CLaD</th><td>×</td><td>✓</td><td>94.7</td><td>100</td><td>100</td><td>98.0</td><td>94.0</td><td>91.0</td><td>100</td><td>95.0</td><td>100</td><td>82.0</td><td>87.0</td></tr>
